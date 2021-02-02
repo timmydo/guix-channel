@@ -1,4 +1,4 @@
-(define-module (coredns)
+(define-module (timmy coredns)
   #:use-module (guix packages)
   #:use-module (guix git-download)
   #:use-module (guix build-system go)
