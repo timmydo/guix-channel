@@ -17,7 +17,7 @@
                     (commit commit)))
               (file-name (git-file-name name version))
               (sha256
-	       base32 "02gdj866mz17p1f0fgfjpbb9cah2ykziacahpkw0viq1vj231hai")))
+	       (base32 "02gdj866mz17p1f0fgfjpbb9cah2ykziacahpkw0viq1vj231hai"))))
      (build-system go-build-system)
      (arguments
       '(#:import-path "github.com/timmydo/coredns"))
