@@ -29,3 +29,5 @@ functionality is not provided out of the box you can add it by
 writing a plugin.")
      (home-page "https://github.com/coredns/coredns")
      (license license:asl2.0))))
+
+coredns
