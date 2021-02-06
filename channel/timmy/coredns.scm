@@ -13,61 +13,11 @@
   #:use-module (srfi srfi-1)
   
   #:export (
-            coredns-configuration-content
+            coredns-configuration
             coredns-service
-            coredns-service-type
-            coredns))
+            coredns-service-type))
 
-(define-record-type* <coredns-configuration>
-  coredns-configuration make-coredns-configuration
-  coredns-configuration?
-  (package coredns-configuration-package
-           (default coredns))
-  (name coredns-configuration-name (default "default"))
-  (config-file coredns-configuration-config-file
-               (default "/etc/Corefile")))
-
-(define %coredns-accounts
-  (list (user-group (name "coredns") (system? #t))
-        (user-account
-         (name "coredns")
-         (group "coredns")
-         (system? #t)
-         (comment "coredns server user")
-         (home-directory "/var/empty")
-         (shell (file-append shadow "/sbin/nologin")))))
-
-(define (coredns-shepherd-service config)
-  (match-record config
-      <coredns-configuration>
-    (package name config-file)
-    (let ((pid-file (string-append "/var/coredns/" name "/_.pid"))
-          (coredns-bin (file-append package "/bin/coredns")))
-      (list (shepherd-service
-             (provision '(coredns))
-             (documentation "Run the coredns daemon.")
-             (requirement '(networking))
-             (start #~(make-forkexec-constructor
-                       `(#$coredns-bin
-                         #$@(list "-pi" pid-file)
-                         #$@(list "-conf" config-file))
-                       #:pid-file #$pid-file))
-             (stop #~(make-kill-destructor)))))))
-
-(define coredns-service-type
-  (service-type
-   (name 'coredns)
-   (extensions
-    (list (service-extension shepherd-root-service-type
-                             coredns-shepherd-service)
-          (service-extension account-service-type
-                             (const %coredns-accounts))))
-   (compose concatenate)
-   (default-value (coredns-configuration))
-   (description "Run the coredns Web server.")))
-
-
-(define coredns
+(define-public coredns
   (let ((commit "78de01a9cddf140c04ec3c4095195177d21cacff")
 	(revision "0"))
     (package
@@ -92,5 +42,52 @@ functionality is not provided out of the box you can add it by
 writing a plugin.")
      (home-page "https://github.com/coredns/coredns")
      (license license:asl2.0))))
+
+
+(define-record-type* <coredns-configuration>
+  coredns-configuration make-coredns-configuration
+  coredns-configuration?
+  (package coredns-configuration-package
+           (default coredns))
+  (name coredns-configuration-name (default "default"))
+  (config-file coredns-configuration-config-file
+               (default "/etc/Corefile")))
+
+(define %coredns-accounts
+  (list (user-group (name "coredns") (system? #t))
+        (user-account
+         (name "coredns")
+         (group "coredns")
+         (system? #t)
+         (comment "coredns server user")
+         (home-directory "/var/empty")
+         (shell (file-append shadow "/sbin/nologin")))))
+
+(define (coredns-shepherd-service config)
+  (match-record config
+      <coredns-configuration>
+    (package name config-file)
+    (let ((coredns-bin (file-append package "/bin/coredns")))
+      (list (shepherd-service
+             (provision '(coredns))
+             (documentation "Run the coredns daemon.")
+             (requirement '(networking))
+             (start #~(make-forkexec-constructor
+                       `(#$coredns-bin
+                         #$@(list "-conf" config-file))))
+             (stop #~(make-kill-destructor)))))))
+
+(define coredns-service-type
+  (service-type
+   (name 'coredns)
+   (extensions
+    (list (service-extension shepherd-root-service-type
+                             coredns-shepherd-service)
+          (service-extension account-service-type
+                             (const %coredns-accounts))))
+   (compose concatenate)
+   (default-value (coredns-configuration))
+   (description "Run the coredns Web server.")))
+
 
 coredns
