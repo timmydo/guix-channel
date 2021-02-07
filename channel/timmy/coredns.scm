@@ -50,6 +50,7 @@ writing a plugin.")
   (package coredns-configuration-package
            (default coredns))
   (name coredns-configuration-name (default "default"))
+  (port coredns-configuration-port (default 1053))
   (config-file coredns-configuration-config-file
                (default "/etc/Corefile")))
 
@@ -66,15 +67,19 @@ writing a plugin.")
 (define (coredns-shepherd-service config)
   (match-record config
       <coredns-configuration>
-    (package name config-file)
-    (let ((coredns-bin (file-append package "/bin/coredns")))
+    (package name port config-file)
+    (let ((coredns-bin (file-append package "/bin/coredns"))
+          (log-filename (string-append "/var/log/coredns-" name ".log")))
       (list (shepherd-service
              (provision '(coredns))
              (documentation "Run the coredns daemon.")
              (requirement '(networking))
              (start #~(make-forkexec-constructor
                        `(#$coredns-bin
-                         #$@(list "-conf" config-file))))
+                         #$@(list "-conf" config-file)
+                         #$@(list "-dns.port" port)
+                         #:user "coredns" #:group "coredns"
+                         #:log-file #$log-filename)))
              (stop #~(make-kill-destructor)))))))
 
 (define coredns-service-type
