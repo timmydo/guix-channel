@@ -77,7 +77,7 @@ writing a plugin.")
              (start #~(make-forkexec-constructor
                        `(#$coredns-bin
                          #$@(list "-conf" config-file)
-                         #$@(list "-dns.port" port))
+                         #$@(list "-dns.port" (number->string port)))
                          #:user "coredns" #:group "coredns"
                          #:log-file #$log-filename))
              (stop #~(make-kill-destructor)))))))
