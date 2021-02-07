@@ -78,8 +78,8 @@ writing a plugin.")
                        `(#$coredns-bin
                          #$@(list "-conf" config-file)
                          #$@(list "-dns.port" (number->string port)))
-                         #:user "coredns" #:group "coredns"
-                         #:log-file #$log-filename))
+                       #:user "coredns" #:group "coredns"
+                       #:log-file #$log-filename))
              (stop #~(make-kill-destructor)))))))
 
 (define coredns-service-type
