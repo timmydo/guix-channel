@@ -1,6 +1,19 @@
 (define-module (timmy radvd)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (guix packages)
+
+  ;; for services
+  #:use-module (guix records)
+  #:use-module (gnu services)
+  #:use-module (gnu services shepherd)
+  #:use-module (gnu system shadow)
+  #:use-module (gnu packages admin)
+  #:use-module (guix packages)
+  #:use-module (guix records)
+  #:use-module (guix gexp)
+  #:use-module (srfi srfi-1)
+
+  ;; for package
   #:use-module (guix download)
   #:use-module (guix git-download)
   #:use-module (guix build-system gnu)
