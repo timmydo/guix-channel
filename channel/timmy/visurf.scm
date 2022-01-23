@@ -16,10 +16,12 @@
   #:use-module (gnu packages curl)
   #:use-module (gnu packages gnu-doc)
   #:use-module (gnu packages gtk)
-  #:use-module (gnu packages libidn)
   #:use-module (gnu packages image)
+  #:use-module (gnu packages libidn)
+  #:use-module (gnu packages perl)
   #:use-module (gnu packages tls)
   #:use-module (gnu packages textutils)
+  #:use-module (gnu packages vim)
   #:use-module (gnu packages web)
   #:use-module (ice-9 match))
 
