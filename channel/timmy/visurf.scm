@@ -12,6 +12,7 @@
   #:use-module (guix utils)
   #:use-module (gnu packages)
   #:use-module (gnu packages base)
+  #:use-module (gnu packages check)
   #:use-module (gnu packages curl)
   #:use-module (gnu packages gnu-doc)
   #:use-module (gnu packages gtk)
