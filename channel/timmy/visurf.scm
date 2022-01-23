@@ -15,6 +15,7 @@
   #:use-module (gnu packages curl)
   #:use-module (gnu packages gnu-doc)
   #:use-module (gnu packages gtk)
+  #:use-module (gnu packages libidn)
   #:use-module (gnu packages image)
   #:use-module (gnu packages tls)
   #:use-module (gnu packages textutils)
@@ -89,30 +90,32 @@ libraries.")
     ;;                             "netsurf-message-timestamp.patch"))))
     (build-system glib-or-gtk-build-system)
     (native-inputs
-     `(("netsurf-buildsystem" ,netsurf-buildsystem)
-       ("nsgenbind" ,nsgenbind)
-       ("libidn" ,libidn)               ;only for tests
-       ("check" ,check)
-       ("perl" ,perl)
-       ("perl-html-parser" ,perl-html-parser)
-       ("pkg-config" ,pkg-config)
-       ("xxd" ,xxd)))
+     (list
+      netsurf-buildsystem
+      nsgenbind
+      libidn
+      check
+      perl
+      perl-html-parser
+      pkg-config
+      xxd))
     (inputs
-     `(("curl" ,curl)
-       ("gtk+" ,gtk+)
-       ("openssl" ,openssl)
-       ("utf8proc" ,utf8proc)
-       ("libpng" ,libpng)
-       ("libjpeg" ,libjpeg-turbo)
-       ("libcss" ,libcss)
-       ("libdom" ,libdom)
-       ("libnsbmp" ,libnsbmp)
-       ("libnsgif" ,libnsgif)
-       ("libnslog" ,libnslog)
-       ("libnspsl" ,libnspsl)
-       ("libnsutils" ,libnsutils)
-       ("libsvgtiny" ,libsvgtiny)
-       ("miscfiles" ,miscfiles)))
+     (list
+      curl
+      gtk+
+      openssl
+      utf8proc
+      libpng
+      libjpeg-turbo
+      libcss
+      libdom
+      libnsbmp
+      libnsgif
+      libnslog
+      libnspsl
+      libnsutils
+      libsvgtiny
+      miscfiles))
     (arguments
      `(#:make-flags `("CC=gcc" "BUILD_CC=gcc"
                       "TARGET=visurf"
