@@ -2,7 +2,7 @@
 ;; My versions of packages
 ;;
 
-(define-module (timmy my)
+(define-module (timmy mail)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (guix gexp)
   #:use-module (guix packages)
