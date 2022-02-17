@@ -53,33 +53,62 @@
 libraries.")
     (license license:expat)))
 
-(define netsurf-buildsystem-arguments
-  `(#:make-flags `("COMPONENT_TYPE=lib-shared"
-                   "CC=gcc" "BUILD_CC=gcc"
-                   ,(string-append "PREFIX=" %output)
-                   ,(string-append "NSSHARED="
-                                   (assoc-ref %build-inputs
-                                              "netsurf-buildsystem")
-                                   "/share/netsurf-buildsystem"))
+
+(define-public libcss-git
+  (package
+    (name "libcss")
+    (version "0.9.1.1")
+ 
+    (source
+     (origin
+       (method git-fetch)
+       (uri
+        (git-reference
+         (url "git://git.netsurf-browser.org/libcss.git")
+         (commit "accad499aed29acb7bc8fb00bea3d9f2b7f43bd1")))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "0mc604r2mkc080yxx1kaw5jwxjslz4c52ph5vnwdkwh0ywrwc8s8"))))
+
+    (arguments
+     `(#:make-flags `("COMPONENT_TYPE=lib-shared"
+                      "CC=gcc" "BUILD_CC=gcc"
+                      ,(string-append "PREFIX=" %output)
+                      ,(string-append "NSSHARED="
+                                      (assoc-ref %build-inputs
+                                                 "netsurf-buildsystem")
+                                      "/share/netsurf-buildsystem"))
     #:test-target "test"
     #:phases (modify-phases %standard-phases
-               (delete 'configure))))
-
+               (delete 'configure)
+               )))
+    
+    (build-system gnu-build-system)
+    (native-inputs
+     (list netsurf-buildsystem pkg-config perl utf8proc))
+    (propagated-inputs                  ;needed for libcss.pc
+     (list libparserutils libwapcaplet))
+    (home-page "https://www.netsurf-browser.org/projects/libcss/")
+    (synopsis "CSS parser and selection library")
+    (description
+     "LibCSS is a CSS (Cascading Style Sheet) parser and selection engine,
+written in C.  It is developed as part of the NetSurf project.")
+    (license license:expat)))
 
 (define-public visurf
   (package
     (name "visurf")
-    (version "0.1")
+    (version "0.1.1")
     (source
      (origin
        (method git-fetch)
        (uri
         (git-reference
          (url "https://git.sr.ht/~sircmpwn/visurf")
-         (commit "1cd98cbfd904bb9e37f010486f027196a32391b0")))
+         (commit "7de863576fbfb0a23d295b22e2c8739b5d1dac57")))
        (file-name (git-file-name name version))
        (sha256
-        (base32 "1as7ips55if000j1lgslyxz3sv7mwql384k6azbi5qc4215mga5x"))))
+        (base32 "0ck3xcmsvxm7hzvmhlsri74nm5c3iki7w9gaqyqvrkg6m0i0zwys"))))
     ;; (source
     ;;  (origin
     ;;    (method url-fetch)
@@ -111,7 +140,7 @@ libraries.")
       utf8proc
       libpng
       libjpeg-turbo
-      libcss
+      libcss-git
       libdom
       libnsbmp
       libnsgif
@@ -142,7 +171,15 @@ libraries.")
              (substitute* '("test/bloom.c" "test/hashtable.c")
                (("/usr/share/dict/words")
                 (string-append (assoc-ref inputs "miscfiles") "/share/web2")))
+             #t))
+
+         (add-after 'unpack 'patch-utf8
+           (lambda* (#:key inputs #:allow-other-keys)
+             (substitute* '("utils/idna.c")
+               (("libutf8proc/utf8proc.h") "utf8proc.h"))
              #t)))))
+
+    
     (home-page "https://git.sr.ht/~sircmpwn/visurf")
     (synopsis "Web browser")
     (description
@@ -151,3 +188,5 @@ lightweight web browser that has its own layout and rendering engine entirely
 written from scratch.  It is small and capable of handling many of the web
 standards in use today.")
     (license license:gpl2+)))
+
+visurf
