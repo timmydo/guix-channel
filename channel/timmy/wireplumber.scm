@@ -19,5 +19,6 @@
 (define-public wireplumber-sans-elogind
   (package
     (inherit wireplumber)
+    (name "wireplumber-sans-elogind")
     (inputs (modify-inputs (package-inputs wireplumber)
                            (delete "elogind")))))
