@@ -20,5 +20,7 @@
   (package
     (inherit wireplumber)
     (name "wireplumber-sans-elogind")
+    (arguments
+     `(#:configure-flags (list "-Dsystem-lua=true" "-Delogind=disabled")))
     (inputs (modify-inputs (package-inputs wireplumber)
                            (delete "elogind")))))
